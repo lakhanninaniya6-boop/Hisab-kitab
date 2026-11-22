@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>कैप्टन जिले सिंह एकेडमी – बस हिसाब</title>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--tx:#1d1d1b;--mu:#6b6a63;--ac:#1f6f4a;--acx:#fff;--bd:#e2dfd3;--rd:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171815;--card:#222320;--tx:#f1efe6;--mu:#a3a197;--ac:#58c08c;--acx:#10261b;--bd:#34352f;--rd:#f2b8b5}}
+:root[data-theme="dark"]{--bg:#171815;--card:#222320;--tx:#f1efe6;--mu:#a3a197;--ac:#58c08c;--acx:#10261b;--bd:#34352f;--rd:#f2b8b5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;padding-bottom:76px}
+header{padding:16px;font-weight:700;font-size:18px}
+header small{display:block;font-weight:400;color:var(--mu);font-size:13px}
+main{padding:0 14px 14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{font-size:28px;font-weight:700;color:var(--ac)}
+.mu{color:var(--mu);font-size:13px}
+label{display:block;font-size:14px;color:var(--mu);margin:10px 0 4px}
+input,select{width:100%;font:inherit;padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+button{font:inherit;border:0;border-radius:12px;padding:14px;background:var(--ac);color:var(--acx);font-weight:700;width:100%;margin-top:14px}
+button.s{background:transparent;color:var(--rd);width:auto;padding:4px 8px;margin:0;font-weight:400}
+button.o{background:var(--card);color:var(--ac);border:1px solid var(--ac)}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{margin:0;border-radius:0;background:transparent;color:var(--mu);padding:14px 0;font-weight:500}
+nav button.on{color:var(--ac);font-weight:700}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.row:last-child{border:0}
+.sc{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+tfoot td{font-weight:700}
+</style></head><body>
+<header>कैप्टन जिले सिंह एकेडमी<small>स्कूल बस हिसाब</small></header>
+<main id="m"></main>
+<nav><button data-t="h">होम</button><button data-t="e">एंट्री</button><button data-t="b">बसें</button><button data-t="r">रिपोर्ट</button></nav>
+<script>
+var S={buses:[],logs:[]},tab="h",$=function(s){return document.querySelector(s)};
+try{S=JSON.parse(localStorage.getItem("jsa")||"")||S}catch(e){}
+function save(){try{localStorage.setItem("jsa",JSON.stringify(S))}catch(e){}}
+function esc(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function n(x){return (Math.round(x*10)/10).toLocaleString("en-IN")}
+function today(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function sum(a,k){return a.reduce(function(t,x){return t+(+x[k]||0)},0)}
+function routes(){var o={};S.buses.forEach(function(b){(o[b.route]=o[b.route]||[]).push(b.no)});return o}
+function uniq(a){return a.filter(function(v,i){return v&&a.indexOf(v)===i})}
+function home(){var t=S.logs.filter(function(l){return l.d===today()}),mo=S.logs.filter(function(l){return l.d.slice(0,7)===today().slice(0,7)});
+return '<div class="grid"><div class="card"><div class="big">'+S.buses.length+'</div><div class="mu">कुल बसें</div></div><div class="card"><div class="big">'+Object.keys(routes()).length+'</div><div class="mu">कुल रूट</div></div>'
++'<div class="card"><div class="big">'+n(sum(t,"km"))+'</div><div class="mu">आज किमी</div></div><div class="card"><div class="big">'+n(sum(t,"l"))+'</div><div class="mu">आज डीज़ल (लीटर)</div></div>'
++'<div class="card"><div class="big">'+n(sum(mo,"km"))+'</div><div class="mu">इस महीने किमी</div></div><div class="card"><div class="big">'+n(sum(mo,"l"))+'</div><div class="mu">इस महीने डीज़ल (लीटर)</div></div></div>'
++(S.buses.length?"":'<div class="card">पहले "बसें" टैब में अपनी बसें और रूट जोड़िए।</div>')}
+function entry(){var opt=S.buses.map(function(b,i){return '<option value="'+i+'">'+esc(b.no)+" – "+esc(b.route)+"</option>"}).join("");
+var dr=uniq(S.logs.map(function(l){return l.dr})),co=uniq(S.logs.map(function(l){return l.co}));
+var last=S.logs.slice(-6).reverse().map(function(l){var i=S.logs.indexOf(l);return '<div class="row"><div>'+esc(l.d)+" · "+esc(l.bus)+'<div class="mu">'+n(l.km)+" किमी · "+n(l.l)+" लीटर · "+esc(l.dr)+" / "+esc(l.co)+'</div></div><button class="s" onclick="dl('+i+')">हटाएँ</button></div>'}).join("");
+return '<div class="card"><label>तारीख़</label><input type="date" id="d" value="'+today()+'"><label>बस</label><select id="b">'+opt+'</select>'
++'<label>चले किलोमीटर</label><input id="k" type="number" inputmode="decimal"><label>डीज़ल (लीटर)</label><input id="l" type="number" inputmode="decimal">'
++'<label>ड्राइवर का नाम</label><input id="dr" list="dl1"><label>कंडक्टर का नाम</label><input id="co" list="dl2">'
++'<datalist id="dl1">'+dr.map(function(x){return '<option value="'+esc(x)+'">'}).join("")+'</datalist><datalist id="dl2">'+co.map(function(x){return '<option value="'+esc(x)+'">'}).join("")+'</datalist>'
++'<button onclick="addLog()">सेव करें</button></div>'+(last?'<div class="card"><b>पिछली एंट्री</b>'+last+'</div>':"")}
+function addLog(){var b=S.buses[+$("#b").value],k=+$("#k").value,l=+$("#l").value;
+if(!b||!k||!$("#d").value){alert("बस, तारीख़ और किलोमीटर भरिए");return}
+S.logs.push({d:$("#d").value,bus:b.no,route:b.route,km:k,l:l,dr:$("#dr").value.trim(),co:$("#co").value.trim()});save();show()}
+function dl(i){if(confirm("यह एंट्री हटाएँ?")){S.logs.splice(i,1);save();show()}}
+function buses(){var r=routes(),rt=Object.keys(r).map(function(k){return '<div class="row"><div>'+esc(k)+'</div><div class="mu">'+r[k].map(esc).join(", ")+"</div></div>"}).join("");
+var li=S.buses.map(function(b,i){return '<div class="row"><div>'+esc(b.no)+'<div class="mu">'+esc(b.route)+'</div></div><button class="s" onclick="db('+i+')">हटाएँ</button></div>'}).join("");
+return '<div class="card"><label>बस नंबर</label><input id="bn"><label>रूट का नाम</label><input id="br"><button onclick="addBus()">बस जोड़ें</button></div>'
++'<div class="card"><b>कुल '+S.buses.length+' बसें</b>'+li+"</div>"+(rt?'<div class="card"><b>रूट के हिसाब से</b>'+rt+"</div>":"")}
+function addBus(){var a=$("#bn").value.trim(),r=$("#br").value.trim();if(!a||!r){alert("बस नंबर और रूट भरिए");return}S.buses.push({no:a,route:r});save();show()}
+function db(i){if(confirm("यह बस हटाएँ? पुरानी एंट्री बनी रहेंगी।")){S.buses.splice(i,1);save();show()}}
+var RM=today().slice(0,7);
+function data(){var L=S.logs.filter(function(l){return l.d.slice(0,7)===RM}),map={};
+L.forEach(function(l){var o=map[l.bus]=map[l.bus]||{bus:l.bus,route:l.route,km:0,l:0,dr:[],co:[]};o.km+=l.km;o.l+=l.l;o.dr.push(l.dr);o.co.push(l.co)});
+return Object.keys(map).map(function(k){var o=map[k];o.dr=uniq(o.dr);o.co=uniq(o.co);return o})}
+function report(){var D=data(),tk=sum(D,"km"),tl=sum(D,"l");
+var rows=D.map(function(o){return "<tr><td>"+esc(o.bus)+"</td><td>"+esc(o.route)+"</td><td>"+n(o.km)+"</td><td>"+n(o.l)+"</td><td>"+(o.l?n(o.km/o.l):"–")+"</td><td>"+esc(o.dr.join(", "))+"</td><td>"+esc(o.co.join(", "))+"</td></tr>"}).join("");
+return '<div class="card"><label>महीना</label><input type="month" id="mo" value="'+RM+'" onchange="RM=this.value;show()"></div>'
++'<div class="card sc">'+(D.length?'<table><thead><tr><th>बस</th><th>रूट</th><th>किमी</th><th>लीटर</th><th>किमी/ली</th><th>ड्राइवर</th><th>कंडक्टर</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr><td colspan="2">कुल</td><td>'+n(tk)+"</td><td>"+n(tl)+"</td><td>"+(tl?n(tk/tl):"–")+"</td><td></td><td></td></tr></tfoot></table>":"इस महीने की कोई एंट्री नहीं है।")+"</div>"
++(D.length?'<button onclick="wa()">व्हाट्सऐप पर भेजें</button><button class="o" onclick="window.print()">प्रिंट / PDF</button>':"")}
+function wa(){var D=data(),t="कैप्टन जिले सिंह एकेडमी – बस रिपोर्ट "+RM+"\n";
+D.forEach(function(o){t+=o.bus+" ("+o.route+"): "+n(o.km)+" किमी, "+n(o.l)+" ली, ड्राइवर "+o.dr.join("/")+", कंडक्टर "+o.co.join("/")+"\n"});
+t+="कुल: "+n(sum(D,"km"))+" किमी, "+n(sum(D,"l"))+" लीटर";location.href="https://wa.me/?text="+encodeURIComponent(t)}
+function show(){$("#m").innerHTML={h:home,e:entry,b:buses,r:report}[tab]();
+document.querySelectorAll("nav button").forEach(function(x){x.className=x.dataset.t===tab?"on":""})}
+document.querySelectorAll("nav button").forEach(function(x){x.onclick=function(){tab=x.dataset.t;show();scrollTo(0,0)}});
+show();
+</script></body></html>
